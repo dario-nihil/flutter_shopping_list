@@ -20,7 +20,7 @@ class _NewItem extends State<NewItem> {
   var _enteredQuantity = 1;
   var _selectedCategories = categories[Categories.vegetables]!;
 
-  _saveItem() {
+  _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -28,7 +28,7 @@ class _NewItem extends State<NewItem> {
           'flutter-backend-aef83-default-rtdb.europe-west1.firebasedatabase.app',
           'shopping-list.json');
 
-      http.post(
+      final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
@@ -42,13 +42,13 @@ class _NewItem extends State<NewItem> {
         ),
       );
 
-      // Navigator.of(context).pop(
-      //   GroceryItem(
-      //       id: DateTime.now().toString(),
-      //       name: _enteredName,
-      //       quantity: _enteredQuantity,
-      //       category: _selectedCategories),
-      // );
+      print(response.body);
+      print(response.statusCode);
+
+      // check to see if context refer to an unmount screen, if it is then simply return.
+      if (!context.mounted) return;
+
+      Navigator.of(context).pop();
     }
   }
 
