@@ -35,8 +35,9 @@ class _NewItem extends State<NewItem> {
                   Expanded(
                     child: TextFormField(
                       // wrapped inside Expanded bcse TextFormField & TextField gets all avaliable space horiz...
-                      decoration:
-                          const InputDecoration(label: Text('Quantity')),
+                      decoration: const InputDecoration(
+                        label: Text('Quantity'),
+                      ),
                       initialValue: '1',
                     ),
                   ),
@@ -68,6 +69,22 @@ class _NewItem extends State<NewItem> {
                       onChanged: (value) {},
                     ),
                   )
+                ],
+              ),
+              const SizedBox(
+                height: 12,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text('Reset'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Add Item'),
+                  ),
                 ],
               ),
             ],
