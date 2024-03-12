@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:shopping_list/data/categories.dart';
 
 class NewItem extends StatefulWidget {
@@ -11,6 +10,12 @@ class NewItem extends StatefulWidget {
 }
 
 class _NewItem extends State<NewItem> {
+  final _formKey = GlobalKey<FormState>();
+
+  _saveItem() {
+    _formKey.currentState!.validate();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +25,7 @@ class _NewItem extends State<NewItem> {
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Form(
+          key: _formKey,
           child: Column(
             children: [
               TextFormField(
@@ -27,18 +33,36 @@ class _NewItem extends State<NewItem> {
                 decoration: const InputDecoration(
                   label: Text('Name'),
                 ),
-                validator: (value) => 'Demo...',
+                validator: (value) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      value.trim().length <= 1 ||
+                      value.trim().length >= 50) {
+                    return 'Must be between 1 and 50 characters.';
+                  }
+                  return null;
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       // wrapped inside Expanded bcse TextFormField & TextField gets all avaliable space horiz...
                       decoration: const InputDecoration(
                         label: Text('Quantity'),
                       ),
                       initialValue: '1',
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            int.tryParse(value) == null ||
+                            int.tryParse(value)! <= 0) {
+                          return 'Must be a valid, positive number.';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(
@@ -78,11 +102,11 @@ class _NewItem extends State<NewItem> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () => _formKey.currentState!.reset(),
                     child: const Text('Reset'),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _saveItem,
                     child: const Text('Add Item'),
                   ),
                 ],
