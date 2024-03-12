@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,13 +23,32 @@ class _NewItem extends State<NewItem> {
   _saveItem() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      Navigator.of(context).pop(
-        GroceryItem(
-            id: DateTime.now().toString(),
-            name: _enteredName,
-            quantity: _enteredQuantity,
-            category: _selectedCategories),
+
+      final url = Uri.https(
+          'flutter-backend-aef83-default-rtdb.europe-west1.firebasedatabase.app',
+          'shopping-list.json');
+
+      http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(
+          {
+            'name': _enteredName,
+            'quantity': _enteredQuantity,
+            'category': _selectedCategories.title,
+          },
+        ),
       );
+
+      // Navigator.of(context).pop(
+      //   GroceryItem(
+      //       id: DateTime.now().toString(),
+      //       name: _enteredName,
+      //       quantity: _enteredQuantity,
+      //       category: _selectedCategories),
+      // );
     }
   }
 
