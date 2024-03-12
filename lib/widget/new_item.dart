@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:shopping_list/data/categories.dart';
 import 'package:shopping_list/models/category.dart';
+import 'package:shopping_list/models/grocery_item.dart';
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -17,7 +18,7 @@ class _NewItem extends State<NewItem> {
   final _formKey = GlobalKey<FormState>();
   var _enteredName = '';
   var _enteredQuantity = 1;
-  var _selectedCategories = categories[Categories.vegetables]!;
+  var _selectedCategory = categories[Categories.vegetables]!;
 
   _saveItem() async {
     if (_formKey.currentState!.validate()) {
@@ -36,18 +37,24 @@ class _NewItem extends State<NewItem> {
           {
             'name': _enteredName,
             'quantity': _enteredQuantity,
-            'category': _selectedCategories.title,
+            'category': _selectedCategory.title,
           },
         ),
       );
 
-      print(response.body);
-      print(response.statusCode);
+      final Map<String, dynamic> resData = json.decode(response.body);
 
       // check to see if context refer to an unmount screen, if it is then simply return.
       if (!context.mounted) return;
 
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(
+        GroceryItem(
+          id: resData['name'],
+          name: _enteredName,
+          quantity: _enteredQuantity,
+          category: _selectedCategory,
+        ),
+      );
     }
   }
 
@@ -111,7 +118,7 @@ class _NewItem extends State<NewItem> {
                   ),
                   Expanded(
                     child: DropdownButtonFormField(
-                      value: _selectedCategories,
+                      value: _selectedCategory,
                       // wrapped inside Expanded bcse DropDown... gets all avaliable space horiz...
                       items: [
                         for (final category in categories.entries)
@@ -134,7 +141,7 @@ class _NewItem extends State<NewItem> {
                       ],
                       onChanged: (value) {
                         setState(() {
-                          _selectedCategories = value!;
+                          _selectedCategory = value!;
                         });
                       },
                     ),
